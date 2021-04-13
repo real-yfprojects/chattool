@@ -9,7 +9,7 @@ const	version : version number
 var	connected : boolean
 
 connect	server : server
-
+------------------------------------------------------
 Messages [send]
  def info
 	INFO <version>
@@ -31,7 +31,7 @@ def message
         <length>  : int {number of bit in content}
         <content> : bit
 
-
+------------------------------------------------------
 Messages [receive]
 def info
 	INFO <version> <ok>
@@ -66,7 +66,7 @@ def connect
 	<length> : int {number of bytes in `user list`}
 	<user list> : str {users seperated by spaces}
 
-
+------------------------------------------------------
 state #Connect:start
 
 	send info[version] to server
@@ -86,7 +86,7 @@ state #Connect:start
 
 	enter #Wait
 
-
+------------------------------------------------------
 state #Wait
 
 	do connected:
@@ -97,7 +97,7 @@ state #Wait
 		receive connect from server --> {process new user/disconnect}
 	od
 
-
+------------------------------------------------------
 state #RecvMSG
 
 	msg[type; from; to; length]
@@ -106,7 +106,7 @@ state #RecvMSG
 
 	{process msg}
 
-
+------------------------------------------------------
 state #Send:command
 
 	content = any
@@ -114,16 +114,16 @@ state #Send:command
 
 	send message[any, any, any, length, content] to server
 
-
+------------------------------------------------------
 state #END:close
 
 	exit
-
+------------------------------------------------------
 state :end
 
 	{pass}
 
-
+------------------------------------------------------
 process server
 const	port : int
 	version : version number
@@ -136,7 +136,7 @@ var	connected : boolean
 bind port
 
 listen for client
-
+------------------------------------------------------
 Messages [recv]
  def info
 	INFO <version>
@@ -158,7 +158,7 @@ def message
         <length>  : int {number of bit in content}
         <content> : bit
 
-
+------------------------------------------------------
 Messages [send]
 def info
 	INFO <version> <ok>
@@ -182,7 +182,7 @@ def connect
 	<user> : str
 	<add>  : boolean {wether the user connected or disconnected
 
-
+------------------------------------------------------
 state #Connect:start
 
 	receive info[-v] from client
@@ -204,14 +204,14 @@ state #Connect:start
 
 	enter #Wait
 
-
+------------------------------------------------------
 state #Wait
 
 	do connected:
 		receive message->-msg from server --> enter #RecvMSG -msg
 	od
 
-
+------------------------------------------------------
 state #RecvMSG
 
 	msg[type; from; to; length]
@@ -222,7 +222,7 @@ state #RecvMSG
 
 	{do #Send with msg for each connected client}
 
-
+------------------------------------------------------
 state #Send:command
 
 	content = any
@@ -230,12 +230,12 @@ state #Send:command
 
 	send message[any, any, any, length, content] to client
 
-
+------------------------------------------------------
 state #END:close
 
 	if -role = {user role} --> send connect[user; 0] to {all clients}
 	exit
-
+------------------------------------------------------
 state :end
 
 	{pass}
