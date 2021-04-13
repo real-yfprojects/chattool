@@ -105,15 +105,8 @@ class SemanticVersion(Version):
         return c or (a and (d or (b and e and l)))
 
     def __eq__(self, other):
-        a = self.major == other.major
-        b = self.minor == other.minor
-        c = self.patch == other.patch
-        d = self.label == other.label
-        return a and b and c and d
-
-    def equals(self, other):
         """
-        Test wether two SemanticVersion are identical.
+        Test whether two SemanticVersion are identical.
 
         Parameters
         ----------
